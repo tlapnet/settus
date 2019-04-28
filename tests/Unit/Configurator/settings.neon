@@ -1,0 +1,25 @@
+host:
+	description: Host
+	default: null
+
+database:
+	description: Database
+	default: null
+
+user:
+	description: Database
+	default: root
+
+password:
+	description: Database
+	default: null
+
+someBool:
+	description: Sample of boolean
+	default: false
+	hidden: true
+	type: bool
+	control:
+		type: checkbox
+		a: b
+		b: a

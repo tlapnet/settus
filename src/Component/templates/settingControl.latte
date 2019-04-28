@@ -1,0 +1,97 @@
+<input class="form-control mb-2" type="text" id="settingsTableFilter" onkeyup="filterSettingsTable()" placeholder="Search..">
+<form n:name="form">
+	<table id="settingsTable" class="table table-bordered table-align-middle border-left-0">
+		<thead>
+		<tr>
+			{* @todo: make key column configurable (show / hide) *}
+			<th style="width:30%;">Key</th>
+			<th>Description</th>
+			<th class="text-center">Value</th>
+			<th n:if="$showDefault" class="text-center">Default</th>
+		</tr>
+		</thead>
+		<tbody>
+		{foreach $items as $setting}
+			<tr {if $setting->isChanged() && $showDefault}class="table-primary"{/if}>
+				<td>{$setting->getKey()}</td>
+				<td>{$setting->getDescription()}</td>
+				<td class="px-2 py-1">
+					{if !$readOnly}
+						<div class="form-inline justify-content-center">
+							{if $form['value_' . $setting->getKey()] instanceof Nette\Forms\Controls\Checkbox}
+								<span class="form-switch form-switch-sm">
+									<input n:name="'value_' . $setting->getKey()">
+									<label n:name="'value_' . $setting->getKey()"></label>
+								</span>
+							{else}
+								{input  'value_' . $setting->getKey()}
+							{/if}
+							{* @todo: make this configurable (show / hide) *}
+							<div class="ml-auto btn-group btn-group-sm">
+								{input 'save_'.  $setting->getKey()}
+								{if $setting->isChanged()}
+									{input 'reset_'. $setting->getKey()}
+								{/if}
+							</div>
+						</div>
+					{else}
+						{if $setting->isHidden()}
+							*****
+						{else}
+							{if $setting->getValue() === null}
+								<code>null</code>
+							{elseif $setting->getValue() === true}
+								<code>true</code>
+							{elseif $setting->getValue() === false}
+								<code>false</code>
+							{else}
+								<code>{$setting->getValue()}</code>
+							{/if}
+						{/if}
+					{/if}
+				</td>
+				<td n:if="$showDefault" class="text-center">
+					{if $setting->getDefault() === null}
+						<code>null</code>
+					{elseif $setting->getDefault() === true}
+						<code>true</code>
+					{elseif $setting->getDefault() === false}
+						<code>false</code>
+					{else}
+						<code>{$setting->getDefault()}</code>
+					{/if}
+				</td>
+			</tr>
+		{/foreach}
+		</tbody>
+	</table>
+
+	{if $readOnly === false}
+		{input resetAll}
+		{input saveAll}
+	{/if}
+
+</form>
+<script>
+	function filterSettingsTable() {
+		// Declare variables
+		var input, filter, table, tr, key, description, i;
+		input = document.getElementById("settingsTableFilter");
+		filter = input.value.toUpperCase();
+		table = document.getElementById("settingsTable");
+		tr = table.getElementsByTagName("tr");
+
+		// Loop through all table rows, and hide those who don't match the search query
+		for (i = 0; i < tr.length; i++) {
+			key = tr[i].getElementsByTagName("td")[0];
+			description = tr[i].getElementsByTagName("td")[1];
+			if (key && description) {
+				if (key.innerHTML.toUpperCase().indexOf(filter) > -1 || description.innerHTML.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = "";
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+</script>
