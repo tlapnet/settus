@@ -16,12 +16,11 @@ Settings manager
 - [Configuration](.docs/README.md#configuration)
 - [Usage](.docs/README.md#usage)
 
-## Versions
+## Version
 
 | State       | Version | Branch   | PHP    |
 |-------------|---------|----------|--------|
 | stable      | `^0.1`  | `master` | `^7.2` |
-
 
 ## Maintainers
 
