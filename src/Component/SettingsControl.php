@@ -29,7 +29,6 @@ class SettingsControl extends Control
 
 	public function __construct(SettingsSection $section)
 	{
-		parent::__construct();
 		$this->section = $section;
 	}
 

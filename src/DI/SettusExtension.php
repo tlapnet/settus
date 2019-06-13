@@ -3,30 +3,40 @@
 namespace Tlapnet\Settus\DI;
 
 use Nette\DI\CompilerExtension;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
+use stdClass;
 use Tlapnet\Settus\Component\ISettingsControlFactory;
 use Tlapnet\Settus\Component\SettingsControl;
 use Tlapnet\Settus\SettingsManager;
 
+/**
+ * @property-read stdClass $config
+ */
 class SettusExtension extends CompilerExtension
 {
 
-	/** @var mixed[] */
-	private $defaults = [
-		'managerClass' => SettingsManager::class,
-		'sections' => [],
-	];
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'managerClass' => Expect::string(SettingsManager::class),
+			'sections' => Expect::array(),
+		]);
+	}
 
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
+		$config = $this->config;
 
 		$builder->addDefinition($this->prefix('settingsManager'))
-			->setFactory($config['managerClass'], [$config['sections']]);
+			->setFactory($config->managerClass, [$config->sections]);
 
-		$builder->addDefinition($this->prefix('settingsControl'))
-			->setType(SettingsControl::class)
+		$settingsControlFactoryDefinition = $builder->addFactoryDefinition($this->prefix('settingsControl'))
 			->setImplement(ISettingsControlFactory::class);
+
+		$settingsControlFactoryDefinition->getResultDefinition()
+			->setType(SettingsControl::class);
 	}
 
 }
